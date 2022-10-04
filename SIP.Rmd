@@ -1,0 +1,59 @@
+---
+title: "Statistical Inference"
+author: "Travon"
+date: "04/10/2022"
+output: html_document
+---
+
+```{r setup, echo=TRUE}
+set.seed(28) #set the seed of R’s random number generator before simulating random values is a good practice.
+lambda <- 0.2     # The provided lambda parameter
+exp_num <- 40     # The number of exponentials
+simu_num <- 1000  # And the number of simulations
+
+#Run the simulations
+simulation <- replicate(simu_num, rexp(exp_num, lambda))
+
+#Calculate the means of the exponential simulation
+means <- apply(simulation, 2, mean)
+
+
+
+sample_mean <- mean(means)    # Get the final mean figure
+theory_mean <- 1/lambda       # The exponential theoretical mean
+
+# Now plot an histogram to see things clear
+r <- hist(means, main = "Exponential Sample Means - (Simulated)", col = "lightgray", breaks = 100)
+abline(v = sample_mean, lwd = 4,  col = "red")
+abline(v = theory_mean, lwd = 4,  col = "blue3")
+
+# And show our numbers
+text(6.5, 30, paste("Sample mean = ", round(sample_mean,2)), col="red")
+text(6.5, 28, paste("Theoretical mean = ", round(theory_mean,2)), col="blue3")
+
+
+
+theory_sd <- (1/lambda)/sqrt(exp_num)
+sample_sd <- sd(means)
+
+theory_var = theory_sd^2
+sample_var = sample_sd^2
+
+
+
+# Provide the histogram of the simulation as background
+hist(means, main = "Normal Distribution X Simulation", col = "lightgray", breaks = 100)
+
+# Overlap the normal distribution
+xfit <- seq(min(means), max(means), length = 100)
+yfit <- dnorm(xfit, mean = 1/lambda, sd = (1/lambda)/sqrt(exp_num))
+lines(xfit, yfit*60, lwd=2, col="red")
+
+# And the simulation density
+den <- density(means)
+lines(den$x, den$y*60, lwd=2, col="blue")
+
+# Provide the legend
+text(6.5, 30, "Normal Distribution", col="red")
+text(6.5, 28, "Simulation Density", col="blue3")
+```
